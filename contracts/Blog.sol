@@ -7,8 +7,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Blog is Ownable {
     uint public articleCount;
     mapping (uint => Article) public articles;
-
-
     uint public receivedDonationAmount;
 
     event ArticleCreated(uint id, string header, string content, uint publishDate, uint likeCount, uint donatedAmount);
@@ -24,6 +22,10 @@ contract Blog is Ownable {
         uint donatedAmount;
         mapping (address => bool) likers;
         mapping (address => uint) donators;
+    }
+
+    constructor(address creator) {
+        transferOwnership(creator);
     }
 
     modifier validArticleId(uint _articleId) {

@@ -8,7 +8,7 @@ contract BlogFactory {
     address[] public deployedBlogs;
 
     function createBlog() public {
-        address newBlog = address(new Blog());
+        address newBlog = address(new Blog(msg.sender));
         deployedBlogs.push(newBlog);
     }
 
