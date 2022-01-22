@@ -109,7 +109,6 @@ describe("Like", () => {
     const updatedLikeCount = firstArticleAfterLike.likeCount.toNumber();
     expect(initialLikeCount + 1).to.equal(updatedLikeCount);
   })
-
   
   it("Same address cannot like the same article twice", async () => {
     expectThrowsAsync(async () => {
@@ -120,7 +119,6 @@ describe("Like", () => {
     })
   })
   
-
   it("Same address can like different articles", async () => {
       const likeTx = await blogContract.likeArticle(0);
       await likeTx.wait();
@@ -182,7 +180,38 @@ describe("Donation", () => {
     expect(donatedAmountInEtherBefore + 1.0).to.equal(donatedAmountInEtherAfter);
   });
 
-  // try to get the donaters
+  it("Donation should update article's donaterCount", async () => {
+    const articleBeforeDonation = await blogContract.articles(0);
+    const options = {value: ethers.utils.parseEther("1.0")}
+    const donationTx = await blogContract.donateToWriter(0, options);
+    await donationTx.wait();
+
+    const articleAfterDonation = await blogContract.articles(0);
+    const donaterCountBefore = (articleBeforeDonation.donaterCount).toNumber();
+    const donaterCountAfter = (articleAfterDonation.donaterCount).toNumber();
+    expect(donaterCountBefore + 1.0).to.equal(donaterCountAfter);
+  });
+
+  it("Donation should update article's donatorsWithAmount", async () => {
+    const articlesWithDonatorsAndAmountsBefore = await blogContract.getArticlesDonatorsWithAmmount(0);
+    const options = {value: ethers.utils.parseEther("1.0")}
+    const donationTx = await blogContract.donateToWriter(0, options);
+    await donationTx.wait();
+
+    const articlesWithDonatorsAndAmountsAfter = await blogContract.getArticlesDonatorsWithAmmount(0);
+    const options2 = {value: ethers.utils.parseEther("2.0")}
+    const donationTx2 = await blogContract.donateToWriter(0, options2);
+    await donationTx2.wait();
+    const articlesWithDonatorsAndAmountsAfter2 = await blogContract.getArticlesDonatorsWithAmmount(0);
+
+    expect(articlesWithDonatorsAndAmountsBefore).to.be.an('array');
+    expect(articlesWithDonatorsAndAmountsAfter).to.be.an('array');
+    expect(articlesWithDonatorsAndAmountsAfter2).to.be.an('array');
+
+    expect(articlesWithDonatorsAndAmountsBefore).to.have.lengthOf(0);
+    expect(articlesWithDonatorsAndAmountsAfter).to.have.lengthOf(1);
+    expect(articlesWithDonatorsAndAmountsAfter2).to.have.lengthOf(2);
+  });
 }) 
 
 

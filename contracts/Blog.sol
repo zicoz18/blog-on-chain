@@ -19,9 +19,15 @@ contract Blog is Ownable {
         string content;
         uint publishDate;
         uint likeCount;
-        uint donatedAmount;
+        uint donatedAmount; // maybe unnecesary we could loop with donaterCount
+        uint donaterCount;
+        mapping (uint => DonatorWithAmount) donatorsWithAmount;
         mapping (address => bool) likers;
-        mapping (address => uint) donators;
+    }
+
+    struct DonatorWithAmount {
+        address donator;
+        uint amount;
     }
 
     constructor(address creator) {
@@ -74,10 +80,25 @@ contract Blog is Ownable {
     }
 
     function _donateToWriter(Article storage _article) internal {
+        _article.donatorsWithAmount[_article.donaterCount] = DonatorWithAmount(msg.sender, msg.value);
         _article.donatedAmount = _article.donatedAmount + msg.value;
-        _article.donators[msg.sender] = _article.donators[msg.sender] + msg.value;
         receivedDonationAmount = receivedDonationAmount + msg.value;
+        _article.donaterCount++;
         emit DonationMade(_article.id, msg.sender, msg.value, receivedDonationAmount);
     }
 
+    function getArticlesDonatorsWithAmmount(uint _id) external view returns (DonatorWithAmount[] memory) {
+        Article storage currentArticle = articles[_id];
+        uint donaterCount = currentArticle.donaterCount; 
+        DonatorWithAmount[] memory donatorsWithAmount = new DonatorWithAmount[](donaterCount);
+        for (uint i = 0; i < donaterCount; i++) {
+            donatorsWithAmount[i] = currentArticle.donatorsWithAmount[i];
+        }
+        return donatorsWithAmount;
+    }
+
+    function withdraw(uint _amount) external onlyOwner{
+        require(_amount <= address(this).balance);
+        payable(msg.sender).transfer(address(this).balance);
+    }
 }
