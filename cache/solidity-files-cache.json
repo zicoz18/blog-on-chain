@@ -37,8 +37,8 @@
       ]
     },
     "/Users/ziyaicoz/coding/blockchain-dev/projects/blog-on-chain/contracts/Blog.sol": {
-      "lastModificationDate": 1642872385638,
-      "contentHash": "d7ca90e33f4ecf00799aa0ff3e685c1e",
+      "lastModificationDate": 1642883412200,
+      "contentHash": "48ee0eea56f37a21afe6dd6c474f6240",
       "sourceName": "contracts/Blog.sol",
       "solcConfig": {
         "version": "0.8.0",
@@ -147,8 +147,8 @@
       ]
     },
     "/Users/ziyaicoz/coding/blockchain-dev/projects/blog-on-chain/contracts/BlogFactory.sol": {
-      "lastModificationDate": 1642802741195,
-      "contentHash": "76f009e97b88319d7858fb504fbd75a9",
+      "lastModificationDate": 1642888936288,
+      "contentHash": "402fbfd6e88eafc31e0bf853dd5a2bbe",
       "sourceName": "contracts/BlogFactory.sol",
       "solcConfig": {
         "version": "0.8.0",

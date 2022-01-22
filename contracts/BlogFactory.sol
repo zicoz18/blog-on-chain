@@ -7,9 +7,12 @@ import "./Blog.sol";
 contract BlogFactory {
     address[] public deployedBlogs;
 
+    event BlogCreated(address blogAddress);
+
     function createBlog() public {
         address newBlog = address(new Blog(msg.sender));
         deployedBlogs.push(newBlog);
+        emit BlogCreated(newBlog);
     }
 
     function getDeployedBlogs() public view returns (address[] memory) {
