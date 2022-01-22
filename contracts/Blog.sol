@@ -35,10 +35,7 @@ contract Blog is Ownable {
     
     function _createArticle(
         string memory _header, 
-        string memory _content, 
-        uint _publishDate, 
-        uint _likeCount, 
-        uint _donatedAmount
+        string memory _content
     ) onlyOwner internal {
         Article storage article = articles[articleCount];
         // Article storage article = Article(_id, _header, _content, _publishDate, _likeCount, _donatedAmount);
@@ -46,15 +43,15 @@ contract Blog is Ownable {
         article.id = articleCount;
         article.header = _header;
         article.content = _content;
-        article.publishDate = _publishDate;
-        article.likeCount = _likeCount;
-        article.donatedAmount = _donatedAmount;
-        emit ArticleCreated(articleCount, _header, _content, _publishDate, _likeCount, _donatedAmount);
+        article.publishDate = block.timestamp;
+        article.likeCount = 0;
+        article.donatedAmount = 0;
+        emit ArticleCreated(articleCount, _header, _content, block.timestamp, 0, 0);
         articleCount++;
     }
 
     function publishArticle(string memory _header, string memory _content) onlyOwner external {
-        _createArticle(_header, _content, block.timestamp, 0, 0);
+        _createArticle(_header, _content);
     }
 
     function likeArticle(uint _articleId) external validArticleId(_articleId){
@@ -78,7 +75,7 @@ contract Blog is Ownable {
 
     function _donateToWriter(Article storage _article) internal {
         _article.donatedAmount = _article.donatedAmount + msg.value;
-        _article.donators[msg.sender] = msg.value;
+        _article.donators[msg.sender] = _article.donators[msg.sender] + msg.value;
         receivedDonationAmount = receivedDonationAmount + msg.value;
         emit DonationMade(_article.id, msg.sender, msg.value, receivedDonationAmount);
     }
