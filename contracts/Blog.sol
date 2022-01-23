@@ -8,6 +8,7 @@ contract Blog is Ownable {
     uint public articleCount;
     mapping (uint => Article) public articles;
     uint public receivedDonationAmount;
+    string public blogsName;
 
     event ArticleCreated(uint id, string header, string content, uint publishDate, uint likeCount, uint donatedAmount);
     event Liked(uint id, address liker, uint likeCount);
@@ -30,8 +31,9 @@ contract Blog is Ownable {
         uint amount;
     }
 
-    constructor(address creator) {
-        transferOwnership(creator);
+    constructor(address _creator, string memory _blogsName) {
+        transferOwnership(_creator);
+        blogsName = _blogsName;
     }
 
     modifier validArticleId(uint _articleId) {

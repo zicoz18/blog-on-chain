@@ -1,3 +1,53 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.ptp-gradient-animated-button {
+    background: -webkit-linear-gradient(left, #06f152, #0076E9);
+    /* background: -webkit-linear-gradient(left, #60c657, #35aee2); */
+    background-size: 200% 200%;
+    animation: gradient-animation 4s ease infinite;
+}
+.buildspace-gradient-animated-button {
+    background: -webkit-linear-gradient(left, #a200d6, #ff6fdf);
+    background-size: 200% 200%;
+    animation: gradient-animation 4s ease infinite;
+    margin-right: 15px;
+}
+
+
+/* KeyFrames */
+@-webkit-keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  @-moz-keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  @keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }

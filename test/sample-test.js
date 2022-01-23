@@ -43,7 +43,7 @@ beforeEach(async () => {
     factoryContract = await BlogFactory.deploy();
     await factoryContract.deployed();
     
-    const createBlogTx = await factoryContract.createBlog();
+    const createBlogTx = await factoryContract.createBlog("newly created blog's name");
     await createBlogTx.wait();
 
     [blogAddress] = await factoryContract.getDeployedBlogs();

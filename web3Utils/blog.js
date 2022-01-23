@@ -4,7 +4,7 @@ import Blog from '../artifacts/contracts/Blog.sol/Blog.json';
 
 const instanceCreatorFunction = (address) => {
     return new web3.eth.Contract(
-        JSON.parse(Blog.abi), 
+        Blog.abi, 
         address
     );
 }

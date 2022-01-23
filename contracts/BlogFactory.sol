@@ -9,8 +9,8 @@ contract BlogFactory {
 
     event BlogCreated(address blogAddress);
 
-    function createBlog() public {
-        address newBlog = address(new Blog(msg.sender));
+    function createBlog(string memory blogsName) public {
+        address newBlog = address(new Blog(msg.sender, blogsName));
         deployedBlogs.push(newBlog);
         emit BlogCreated(newBlog);
     }
