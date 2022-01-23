@@ -25,6 +25,9 @@ const firstArticleContentValue = "and this is the content";
 const secondArticleHeaderValue = "this is a second header";
 const secondArticleContentValue = "and this is the second content";
 
+const newlyCreatedBlogsName = "newly created blog's name";
+const publishedArticleCountBeforeEach = 2;
+
 
 // let accounts;
 let owner;
@@ -43,7 +46,7 @@ beforeEach(async () => {
     factoryContract = await BlogFactory.deploy();
     await factoryContract.deployed();
     
-    const createBlogTx = await factoryContract.createBlog("newly created blog's name");
+    const createBlogTx = await factoryContract.createBlog(newlyCreatedBlogsName);
     await createBlogTx.wait();
 
     [blogAddress] = await factoryContract.getDeployedBlogs();
@@ -213,6 +216,15 @@ describe("Donation", () => {
     expect(articlesWithDonatorsAndAmountsAfter2).to.have.lengthOf(2);
   });
 }) 
+
+describe("Get Summary", () => {
+  it("Return values are as expected", async () => {
+    const summaryObject = await blogContract.getSummary();
+    expect(summaryObject[0]).to.be.equal(newlyCreatedBlogsName);
+    expect(summaryObject[1]).to.be.equal(owner.address);
+    expect(summaryObject[2]).to.be.equal(publishedArticleCountBeforeEach);
+  })
+})
 
 
 
