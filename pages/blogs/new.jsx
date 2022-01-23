@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { Form, Input, Message, Button } from 'semantic-ui-react';
 import web3 from '../../web3Utils/web3';
 import factory from '../../web3Utils/factory';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 
 const New = () => {
+    const router = useRouter();
     const [blogName, setBlogName] = useState('');
     const [loading, setLoading] = useState(false);
 
     const submitForm = async (event) => {
-
         // to not allow web browser to automaticly try to submit the form to our backend
         event.preventDefault();
 
@@ -31,7 +31,7 @@ const New = () => {
                     draggable: true,
                     progress: undefined,
                     });
-            Router.push('/');
+                router.push('/');
         } catch (err) {
             toast.error('Transaction Failed!', {
                 position: "bottom-right",

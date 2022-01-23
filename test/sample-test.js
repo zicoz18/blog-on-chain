@@ -223,6 +223,8 @@ describe("Get Summary", () => {
     expect(summaryObject[0]).to.be.equal(newlyCreatedBlogsName);
     expect(summaryObject[1]).to.be.equal(owner.address);
     expect(summaryObject[2]).to.be.equal(publishedArticleCountBeforeEach);
+    expect(summaryObject[3]).to.be.equal(0);
+
   })
 })
 

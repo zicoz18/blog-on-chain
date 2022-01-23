@@ -104,11 +104,12 @@ contract Blog is Ownable {
         payable(msg.sender).transfer(address(this).balance);
     }
 
-    function getSummary() public view returns (string memory, address, uint) {
+    function getSummary() public view returns (string memory, address, uint, uint) {
         return (
             blogsName,
             owner(),
-            articleCount
+            articleCount,
+            receivedDonationAmount
         );
     }
 }
