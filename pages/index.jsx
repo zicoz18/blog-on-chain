@@ -3,10 +3,17 @@ import Blog from '../web3Utils/blog';
 import { Card, Button } from 'semantic-ui-react';
 import { useRouter } from 'next/router'
 import { usersWeb3 } from '../web3Utils/usersWeb3';
+import web3 from '../web3Utils/web3';
+import { useEffect } from 'react';
 
 
 const Home = (props) => {
   const router = useRouter();
+
+  useEffect(() => {
+    web3.eth.getAccounts();
+  }, []);
+  
 
   const renderBlogs = () => {
     const items = props.blogDetails.map((blogDetail, index) => (
