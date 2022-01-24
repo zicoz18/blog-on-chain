@@ -15,14 +15,14 @@ const BlogDetail = (props) => {
   const [userBlogContract, setUserBlogContract] = useState();
 
   useEffect(async () => {
-    const wallet = (await web3.eth.getAccounts())[0];
-    const blogContract = usersBlog(props.address);
-    blogContract.defaultAccount = wallet;
-    setUserBlogContract(blogContract);
-    setBlogsBalance(props.blogsBalance);
-    if (props.owner == wallet) {
-      setIsOwner(true)
-    }
+      const wallet = (await web3.eth.getAccounts())[0];
+      const blogContract = usersBlog(props.address);
+      blogContract.defaultAccount = wallet;
+      setUserBlogContract(blogContract);
+      setBlogsBalance(props.blogsBalance);
+      if (props.owner == wallet) {
+        setIsOwner(true)
+      }
   }, []);
 
   const submitWithdrawal = async (event) => {
