@@ -21,7 +21,6 @@ try {
     window.ethereum.request({method: 'wallet_addEthereumChain', params:data})
     usersWeb3 = new Web3(window.ethereum);
 } catch (err) {
-  console.log(err);
   console.log("trying to use userWeb3 in server");
 }
 
