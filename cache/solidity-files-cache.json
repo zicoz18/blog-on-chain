@@ -37,8 +37,8 @@
       ]
     },
     "/Users/ziyaicoz/coding/blockchain-dev/projects/blog-on-chain/contracts/Blog.sol": {
-      "lastModificationDate": 1642978962136,
-      "contentHash": "170a10bc645876b04bd0affe37ad327e",
+      "lastModificationDate": 1643036620724,
+      "contentHash": "4123d09b044eedf109fef524af2a3100",
       "sourceName": "contracts/Blog.sol",
       "solcConfig": {
         "version": "0.8.0",

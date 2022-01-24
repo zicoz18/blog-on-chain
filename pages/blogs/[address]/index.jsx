@@ -1,12 +1,15 @@
 import Blog from "../../../web3Utils/blog";
 import { useRouter } from 'next/router'
-import { Button, Card, Icon, Header } from 'semantic-ui-react';
+import { Button, Card, Icon, Header, Form, Input } from 'semantic-ui-react';
 import web3 from '../../../web3Utils/web3';
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const BlogDetail = (props) => {
   const router = useRouter();
   const [isOwner, setIsOwner] = useState(false);
+  const [withdrawalAmount, setWithdrawalAmount] = useState('');
+  const [withdrawalLoading, setWithdrawalLoading] = useState(false);
 
   useEffect(async () => {
     const wallet = (await web3.eth.getAccounts())[0];
@@ -14,17 +17,45 @@ const BlogDetail = (props) => {
       setIsOwner(true)
     }
   }, []);
-  
 
-  // const publishDefaultArticle = async () => {
-  //   // const sumObj = await props.blogContract.methods.getSummary().call();
-  //   const accounts = await web3.eth.getAccounts();
-  //   await props.blogContract.methods.publishArticle("My First NFT project", "I had done my first NFT project on the summer of 2021. It was called AvaxDoge")
-  //     .send({
-  //       from: accounts[0]
-  //     });
-  //   console.log("after publishing article")
-  // }
+  const submitWithdrawal = async (event) => {
+    event.preventDefault();
+
+    setWithdrawalLoading(true);
+    try {
+        const accounts = await web3.eth.getAccounts();
+        const withdrawalAmountConst = withdrawalAmount;
+        const withdrawalAmountInWei = web3.utils.toWei(withdrawalAmount, 'ether')
+        console.log("contract: ", props.blogContract);
+        console.log("methods: ", props.blogContract.methods);
+        console.log("function: ", props.blogContract.methods.donateToWriter);
+        await props.blogContract.methods.withdraw(withdrawalAmountInWei).send({ 
+            from: accounts[0]
+        });
+            toast.success(`Withdrew ${withdrawalAmountConst} AVAX`, {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                });
+            // router.push('/');
+    } catch (err) {
+        console.log(err)
+        toast.error('Transaction Failed!', {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            });
+    }
+    setWithdrawalLoading(false);
+};
   
   const renderArticles = () => {
     const items = props.articles.map((articleDetail, index) => {
@@ -39,21 +70,99 @@ const BlogDetail = (props) => {
           <div>
             <p>
               {articleDetail.likeCount}
-              <Icon onClick={() => console.log("heartClicked")} color='red' name='heart' />
+              <Icon color='red' name='heart' />
             </p>
           </div>
-          <p>Donated Amount: {articleDetail.donatedAmount} AVAX</p>
+          <p>Donated Amount: {web3.utils.fromWei(articleDetail.donatedAmount, 'ether')} AVAX</p>
           <p>Publish date: {date}</p>
         </div>),
         fluid: true,
         link: true,
         onClick: () => {
-          router.push(`/blogs/${props.blogAddresses[index]}`);
+          router.push(`/blogs/${props.address}/${articleDetail.id}`);
         }
       };
     });
     return <Card.Group items={items}/>;
   }
+
+  const renderOwnerView = () => (
+    <div className="float-right" >
+      <div className="flex justify-center" >
+            <Button  
+              style={{ marginRight: "0" }}
+              content="Create Article"
+              icon="add circle"
+              color='teal'
+              primary={false}
+              onClick={() => router.push(`/blogs/${props.address}/new`)}
+            />
+      </div>
+          <Header 
+            sub
+            className="text-center"
+            style={{marginTop: "0.75rem", marginBottom: "0.75rem"}}
+          // floated="right"
+          >Total donated amount
+          </Header>
+          <div
+          // className="float-right"
+          className="text-center"
+          >{web3.utils.fromWei(props.donatedAmount, 'ether')} AVAX
+          </div>
+
+          <Header 
+            sub
+            className="text-center"
+            style={{marginTop: "0.75rem", marginBottom: "0.75rem"}}
+          // floated="right"
+          >Blog's balance
+          </Header>
+          <div
+          // className="float-right"
+          className="text-center"
+          >{web3.utils.fromWei(props.blogsBalance, 'ether')} AVAX
+          </div>
+
+
+                <h3></h3>
+                <Form onSubmit={(event) => submitWithdrawal(event)} >
+                    <Form.Field>
+                        <Input 
+                            placeholder="0.0"
+                            label="AVAX" 
+                            labelPosition='right'
+                            onChange={ event => setWithdrawalAmount(event.target.value) }
+                        />
+                    </Form.Field>
+                    <div className="flex justify-center" >
+                          <Button  
+                          style={{ marginRight: "0" }}
+                          color='teal'
+                          primary={false}
+                          loading={withdrawalLoading}
+                        >
+                        Withdraw
+                        </Button>
+                    </div>
+                </Form>
+      </div>
+  );
+
+  const renderNonOwnerView = () => (
+    <div className="float-right" >
+    <Header 
+    sub
+    className="text-center"
+    >Total donated amount
+    </Header>
+    <div
+      // className="float-right"
+      className="text-center"
+      >{web3.utils.fromWei(props.donatedAmount, 'ether')} AVAX
+    </div>
+  </div>
+  )
 
   return (
     <div className='min-h-screen' >
@@ -63,43 +172,9 @@ const BlogDetail = (props) => {
 
       {
       isOwner ? 
-        <div className="float-right" >
-          <Header 
-          sub
-          // floated="right"
-          >Total donated amount
-          </Header>
-          <div
-          // className="float-right"
-          className="text-center"
-          >{props.donatedAmount} AVAX
-          </div>
-          <div className="flex justify-center" >
-            <Button  
-              className="mr-0"
-              content="Create your Blog"
-              icon="add circle"
-              color='teal'
-              primary={false}
-              onClick={() => router.push(`/blogs/${props.address}/new`)}
-              >
-              Create Article!
-            </Button>
-          </div>
-      </div>
+        renderOwnerView()
       : 
-      <div className="float-right" >
-        <Header 
-        sub
-        // floated="right"
-        >Total donated amount
-        </Header>
-        <div
-          // className="float-right"
-          className="text-center"
-          >{props.donatedAmount} AVAX
-        </div>
-      </div>
+        renderNonOwnerView()
       }
       {renderArticles()}
 
@@ -113,8 +188,9 @@ BlogDetail.getInitialProps = async (context) => {
   const summaryObject = await blogContract.methods.getSummary().call();
   const name = summaryObject[0];
   const owner = summaryObject[1]; 
-  const articleCount = summaryObject[2]
-  const donatedAmount = summaryObject[3]
+  const articleCount = summaryObject[2];
+  const donatedAmount = summaryObject[3];
+  const blogsBalance = summaryObject[4];
 
   // Load articles
   const articles = await Promise.all(
@@ -124,8 +200,6 @@ BlogDetail.getInitialProps = async (context) => {
             blogContract.methods.articles(index).call()
         ))
   );
-  console.log("Articles: ", articles);
-
  // Returning this object add them to the props
   return { 
       address: context.query.address,
@@ -134,32 +208,9 @@ BlogDetail.getInitialProps = async (context) => {
       owner: owner, 
       articleCount: articleCount,
       articles: articles,
-      donatedAmount: donatedAmount
+      donatedAmount: donatedAmount,
+      blogsBalance: blogsBalance
    };
 }
 
 export default BlogDetail;
-
-/*         {/* <div className="float-right" >
-          <Header 
-            sub
-            // floated="right"
-            >Total donated amount
-            </Header>
-            <span
-            // className="float-right"
-            >{props.articleCount} AVAX</span>
-        <div>
-
-        <Button  
-            // floated="right"
-            content="Create your Blog"
-            icon="add circle"
-            color='teal'
-            primary={false}
-            onClick={() => router.push(`/blogs/${props.address}/new`)}
-            >
-            Create Article!
-        </Button>
-              </div>
-        </div> */

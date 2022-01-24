@@ -89,7 +89,7 @@ contract Blog is Ownable {
         emit DonationMade(_article.id, msg.sender, msg.value, receivedDonationAmount);
     }
 
-    function getArticlesDonatorsWithAmmount(uint _id) external view returns (DonatorWithAmount[] memory) {
+    function getArticlesDonatorsWithAmmount(uint _id)  external view validArticleId(_id) returns (DonatorWithAmount[] memory)  {
         Article storage currentArticle = articles[_id];
         uint donaterCount = currentArticle.donaterCount; 
         DonatorWithAmount[] memory donatorsWithAmount = new DonatorWithAmount[](donaterCount);
@@ -99,17 +99,26 @@ contract Blog is Ownable {
         return donatorsWithAmount;
     }
 
-    function withdraw(uint _amount) external onlyOwner{
-        require(_amount <= address(this).balance);
-        payable(msg.sender).transfer(address(this).balance);
+    function isArticleLikedByAddress(uint _id) external view validArticleId(_id) returns (bool) {
+        return articles[_id].likers[msg.sender];
     }
 
-    function getSummary() public view returns (string memory, address, uint, uint) {
+    function withdraw(uint _amount) external onlyOwner {
+        require(_amount <= address(this).balance);
+        payable(msg.sender).transfer(_amount);
+    }
+
+    function blogBalance() external view returns (uint) {
+        return address(this).balance;
+    }
+
+    function getSummary() public view returns (string memory, address, uint, uint, uint) {
         return (
             blogsName,
             owner(),
             articleCount,
-            receivedDonationAmount
+            receivedDonationAmount,
+            address(this).balance
         );
     }
 }

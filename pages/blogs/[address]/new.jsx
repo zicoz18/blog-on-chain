@@ -72,9 +72,8 @@ const NewArticle = (props) => {
             loading={loading}
             color='teal'
             primary={false}
-        >
-            Publish
-        </Button>
+            content="Publish"
+        />
     </Form>
     </div>
   );

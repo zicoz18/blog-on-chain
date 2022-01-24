@@ -217,14 +217,75 @@ describe("Donation", () => {
   });
 }) 
 
-describe("Get Summary", () => {
-  it("Return values are as expected", async () => {
+describe("Get necessary data", () => {
+  it("Summary return values are as expected", async () => {
     const summaryObject = await blogContract.getSummary();
     expect(summaryObject[0]).to.be.equal(newlyCreatedBlogsName);
     expect(summaryObject[1]).to.be.equal(owner.address);
     expect(summaryObject[2]).to.be.equal(publishedArticleCountBeforeEach);
     expect(summaryObject[3]).to.be.equal(0);
+  })
 
+  it("isArticleLikedByAddress returns as expected", async () => {
+    const isArticleLikedByAddressBefore = await blogContract.isArticleLikedByAddress(0);
+    expect(isArticleLikedByAddressBefore).to.be.false;
+    const likeTx = await blogContract.likeArticle(0);
+    await likeTx.wait();
+
+    const isArticleLikedByAddressAfter = await blogContract.isArticleLikedByAddress(0);
+    expect(isArticleLikedByAddressAfter).to.be.true;
+  })
+})
+
+describe("Blog balance and withdrawal", () => {
+  it("Blog balance should increase with donate", async () => {
+    const blogBalanceBeforeDonation = await blogContract.blogBalance();
+    const blogBalanceBeforeDonationInEther = parseFloat(ethers.utils.formatEther(blogBalanceBeforeDonation))
+    expect(blogBalanceBeforeDonationInEther).to.equal(0);
+
+    const options = {value: ethers.utils.parseEther("1.0")}
+    const donationTx = await blogContract.donateToWriter(0, options);
+    await donationTx.wait();
+    const blogBalanceAfterDonation = await blogContract.blogBalance();
+    const blogBalanceAfterDonationInEther = parseFloat(ethers.utils.formatEther(blogBalanceAfterDonation))
+    expect(blogBalanceAfterDonationInEther).to.equal(1);
+  })
+
+  it("Blog balance should decrease with withdrawal", async () => {
+    const blogBalanceBeforeDonation = await blogContract.blogBalance();
+    const blogBalanceBeforeDonationInEther = parseFloat(ethers.utils.formatEther(blogBalanceBeforeDonation))
+    expect(blogBalanceBeforeDonationInEther).to.equal(0);
+
+    const options = {value: ethers.utils.parseEther("1.0")}
+    const donationTx = await blogContract.donateToWriter(0, options);
+    await donationTx.wait();
+    const blogBalanceAfterDonation = await blogContract.blogBalance();
+    const blogBalanceAfterDonationInEther = parseFloat(ethers.utils.formatEther(blogBalanceAfterDonation))
+    expect(blogBalanceAfterDonationInEther).to.equal(1);
+
+    const withdrawTx = await blogContract.withdraw(ethers.utils.parseEther("0.7"));
+    await withdrawTx.wait();
+    const blogBalanceAfterWithdrawal = await blogContract.blogBalance();
+    const blogBalanceAfterWithdrawalInEther = parseFloat(ethers.utils.formatEther(blogBalanceAfterWithdrawal))
+    expect(blogBalanceAfterWithdrawalInEther).to.equal(0.3);
+  })
+
+  it("Cannot withdraw more than blog's balance", async () => {
+    const blogBalanceBeforeDonation = await blogContract.blogBalance();
+    const blogBalanceBeforeDonationInEther = parseFloat(ethers.utils.formatEther(blogBalanceBeforeDonation))
+    expect(blogBalanceBeforeDonationInEther).to.equal(0);
+
+    const options = {value: ethers.utils.parseEther("1.0")}
+    const donationTx = await blogContract.donateToWriter(0, options);
+    await donationTx.wait();
+    const blogBalanceAfterDonation = await blogContract.blogBalance();
+    const blogBalanceAfterDonationInEther = parseFloat(ethers.utils.formatEther(blogBalanceAfterDonation))
+    expect(blogBalanceAfterDonationInEther).to.equal(1);
+
+    expectThrowsAsync(async () => {
+      const withdrawTx = await blogContract.withdraw(ethers.utils.parseEther("1.5"));
+      await withdrawTx.wait();
+    });
   })
 })
 

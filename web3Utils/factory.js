@@ -3,7 +3,7 @@ import BlogFactory from '../artifacts/contracts/BlogFactory.sol/BlogFactory.json
 
 const instance = new web3.eth.Contract(
     BlogFactory.abi, 
-    '0x62E910488991497450077C7Ac4f9e67ddC337Ea3'
+    '0xf52247D91F31cE5d06F19F97B686dC7C061E8914'
 );
 
 export default instance;

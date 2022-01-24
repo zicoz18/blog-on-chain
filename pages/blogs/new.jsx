@@ -62,9 +62,8 @@ const New = () => {
                 loading={loading}
                 color='teal'
                 primary={false}
-            >
-                Create
-            </Button>
+                content="Create"
+            />
         </Form>
     </div>
   );
