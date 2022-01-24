@@ -4,15 +4,22 @@ import { Button, Card, Icon, Header, Form, Input } from 'semantic-ui-react';
 import web3 from '../../../web3Utils/web3';
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import usersBlog from '../../../web3Utils/usersBlog';
 
 const BlogDetail = (props) => {
   const router = useRouter();
   const [isOwner, setIsOwner] = useState(false);
   const [withdrawalAmount, setWithdrawalAmount] = useState('');
   const [withdrawalLoading, setWithdrawalLoading] = useState(false);
+  const [blogsBalance, setBlogsBalance] = useState();
+  const [userBlogContract, setUserBlogContract] = useState();
 
   useEffect(async () => {
     const wallet = (await web3.eth.getAccounts())[0];
+    const blogContract = usersBlog(props.address);
+    blogContract.defaultAccount = wallet;
+    setUserBlogContract(blogContract);
+    setBlogsBalance(props.blogsBalance);
     if (props.owner == wallet) {
       setIsOwner(true)
     }
@@ -24,24 +31,22 @@ const BlogDetail = (props) => {
     setWithdrawalLoading(true);
     try {
         const accounts = await web3.eth.getAccounts();
-        const withdrawalAmountConst = withdrawalAmount;
+        const withdrawalAmountConst = withdrawalAmount; // 0.1 string
         const withdrawalAmountInWei = web3.utils.toWei(withdrawalAmount, 'ether')
-        console.log("contract: ", props.blogContract);
-        console.log("methods: ", props.blogContract.methods);
-        console.log("function: ", props.blogContract.methods.donateToWriter);
-        await props.blogContract.methods.withdraw(withdrawalAmountInWei).send({ 
+        const remainigBalanceAsString = web3.utils.toWei((parseFloat(web3.utils.fromWei(blogsBalance, 'ether')) - parseFloat(withdrawalAmount)).toFixed(2), 'ether');
+        await userBlogContract.methods.withdraw(withdrawalAmountInWei).send({ 
             from: accounts[0]
         });
-            toast.success(`Withdrew ${withdrawalAmountConst} AVAX`, {
-                position: "bottom-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                });
-            // router.push('/');
+        setBlogsBalance(remainigBalanceAsString);
+        toast.success(`Withdrew ${withdrawalAmountConst} AVAX`, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
     } catch (err) {
         console.log(err)
         toast.error('Transaction Failed!', {
@@ -121,10 +126,8 @@ const BlogDetail = (props) => {
           <div
           // className="float-right"
           className="text-center"
-          >{web3.utils.fromWei(props.blogsBalance, 'ether')} AVAX
+          >{web3.utils.fromWei(blogsBalance, 'ether')} AVAX
           </div>
-
-
                 <h3></h3>
                 <Form onSubmit={(event) => submitWithdrawal(event)} >
                     <Form.Field>
@@ -191,7 +194,6 @@ BlogDetail.getInitialProps = async (context) => {
   const articleCount = summaryObject[2];
   const donatedAmount = summaryObject[3];
   const blogsBalance = summaryObject[4];
-
   // Load articles
   const articles = await Promise.all(
     Array(parseInt(articleCount))

@@ -2,6 +2,7 @@ import factory from '../web3Utils/factory';
 import Blog from '../web3Utils/blog';
 import { Card, Button } from 'semantic-ui-react';
 import { useRouter } from 'next/router'
+import usersWeb3 from '../web3Utils/usersWeb3';
 
 
 const Home = (props) => {

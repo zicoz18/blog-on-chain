@@ -32,7 +32,6 @@ const NewArticle = (props) => {
                     draggable: true,
                     progress: undefined,
                     });
-                    console.log("address from props: ", props.address);
                 router.push(`/blogs/${props.address}`);
         } catch (err) {
             console.log(err)
