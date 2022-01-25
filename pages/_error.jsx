@@ -58,7 +58,7 @@ const _error = () => {
     const renderNotConnectedContainer = () => (
       <>
         <Dimmer active={redirecting}>
-          <Loader content="Redirecting"/>
+          <Loader content="Reloading"/>
         </Dimmer>
         <div className="flex justify-center items-center min-h-screen" >
             <div className="mb-48 flex flex-col items-center" >
