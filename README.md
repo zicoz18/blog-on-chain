@@ -1,15 +1,21 @@
-# Basic Sample Hardhat Project
+# Blog on Chain (Blogchain)
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+## Project's goal
+- Create a website for anyone to create their own blogs and publish articles on those blogs.
+- Hold all blogs and articles data on blockchain so anyone can write anything they want.
 
-Try running some of the following tasks:
+## Features
+- Creating a blog
+- Publishing an article
+- Exploring others' blogs and articles
+- Liking articles
+- Donating to the article writer
+- Seeing donators to an article
+- Withdrawing donations
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
-```
+## Used technologies
+  * Hardhat for smart contract development, testing (chai) and deploying
+  * React.js with Next.js for front-end
+  * Ether.js for testing smart contracts, Web3.js for connecting front-end to smart contracts.
+  * Semantic ui react for styled components and Tailwind css for custom css.
+
