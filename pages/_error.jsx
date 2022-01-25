@@ -47,7 +47,7 @@ const _error = () => {
             blockExplorerUrls: ['https://testnet.snowtrace.io/'],
           }]
           await window.ethereum.request({method: 'wallet_addEthereumChain', params:data})
-          router.reload();
+          router.push('/');
         } catch (error) {
           console.log(error)
         }
@@ -58,7 +58,7 @@ const _error = () => {
     const renderNotConnectedContainer = () => (
       <>
         <Dimmer active={redirecting}>
-          <Loader content="Reloading"/>
+          <Loader content="Redirecting"/>
         </Dimmer>
         <div className="flex justify-center items-center min-h-screen" >
             <div className="mb-48 flex flex-col items-center" >
