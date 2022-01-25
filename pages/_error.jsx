@@ -47,7 +47,7 @@ const _error = () => {
             blockExplorerUrls: ['https://testnet.snowtrace.io/'],
           }]
           await window.ethereum.request({method: 'wallet_addEthereumChain', params:data})
-          router.push('/');
+          router.reload();
         } catch (error) {
           console.log(error)
         }
